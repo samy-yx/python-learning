@@ -2,7 +2,9 @@ from decimal import Decimal,InvalidOperation
 from datetime import date #打印当前系统日期
 from datetime import datetime
 import uuid #模拟生成唯一标识符
+import json
 
+""""""
 #判断金额是否合法
 def check_amount(amount):
     try:
@@ -15,14 +17,7 @@ def check_amount(amount):
     except InvalidOperation:
         return False
 
-# 输入金额
-while True:
-    amount = input("请输入金额:")
-    if check_amount(amount):
-        print("输入成功")
-        break
-    else:
-        print("金额不合法，请重新输入")
+
 
 #判断收支类型是否合法
 def check_bill_type(bill_type):
@@ -35,6 +30,32 @@ def check_bill_type(bill_type):
     else:
         return False
 
+#检查账单是否为空
+def load_bills():
+    try:
+        with open("bill.json", "r", encoding="utf-8") as f:
+            original_bills = json.load(f)
+            return original_bills
+    except FileNotFoundError:
+        #如果文件不存在/文件是空的，初始化空列表
+        # bills = []
+        # return bills
+        return []
+
+
+#保存账单
+def save_bills(bills):
+    with open("bill.json","w",encoding = "utf-8") as f:
+        json.dump(bills,f,ensure_ascii = False,indent = 4)
+
+# 输入金额
+while True:
+    amount = input("请输入金额:")
+    if check_amount(amount):
+        print("输入成功")
+        break
+    else:
+        print("金额不合法，请重新输入")
 
 # 输入收支类型
 while True:
@@ -88,3 +109,15 @@ bill["category"] = category
 bill["bill_date"] = bill_date
 bill["remark"] = remark
 print(bill)
+
+
+
+#完整保存账单
+bills = load_bills()
+bills.append(bill)
+save_bills(bills)
+
+
+
+
+
